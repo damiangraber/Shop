@@ -4,11 +4,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Shop.Application.Products;
+using Shop.Database;
 
 namespace Shop.UI.Pages
 {
     public class IndexModel : PageModel
     {
+        private AppDbContext _context;
+
+        public IndexModel(AppDbContext context)
+        {
+            _context = context;
+        }
+
         [BindProperty]
         public ProductViewModel Product { get; set; }
 
@@ -22,6 +31,13 @@ namespace Shop.UI.Pages
         public void OnGet()
         {
 
+        }
+
+        public async Task<IActionResult> OnPost()
+        {
+            await new CreateProduct(_context).Do(Product.Name, Product.Description, Product.Value); 
+
+            return RedirectToPage("Index");
         }
     }
 }
